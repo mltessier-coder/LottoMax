@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Lotto Max Generator</title>
+
+<link rel="manifest" href="manifest.json">
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #0f0f0f;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+}
+
+h1 {
+    color: #4CAF50;
+}
+
+button, select {
+    padding: 12px;
+    font-size: 16px;
+    margin: 10px;
+    border-radius: 8px;
+    border: none;
+}
+
+button {
+    background: #4CAF50;
+    color: white;
+}
+
+.line {
+    background: #1e1e1e;
+    margin: 8px auto;
+    padding: 10px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎲 Lotto Max </h1>
+<p>Générateur anti-pattern - Michel Tessier</p>
+
+<select id="budget">
+    <option value="2">~10$ (2 lignes)</option>
+    <option value="5" selected>~25$ (5 lignes)</option>
+    <option value="10">~50$ (10 lignes)</option>
+</select>
+
+<br>
+
+<button onclick="generate()">Générer</button>
+
+<div id="output"></div>
+
+<script>
+const POOL_A = Array.from({length: 19}, (_, i) => i + 32);
+const POOL_B = [16,17,18,19,20,21,22,23,24,26,27,28,29,30,31];
+
+function pick(arr, n) {
+    let copy = [...arr];
+    let res = [];
+    for (let i = 0; i < n; i++) {
+        let idx = Math.floor(Math.random() * copy.length);
+        res.push(copy.splice(idx, 1)[0]);
+    }
+    return res;
+}
+
+function generateLine() {
+    let set = new Set();
+
+    pick(POOL_A, 4).forEach(n => set.add(n));
+    pick(POOL_B, 3).forEach(n => set.add(n));
+
+    while (set.size < 7) {
+        let all = POOL_A.concat(POOL_B);
+        set.add(all[Math.floor(Math.random() * all.length)]);
+    }
+
+    return Array.from(set).sort((a,b)=>a-b);
+}
+
+function generateSystem(lines) {
+    let system = [];
+    let used = new Set();
+
+    while (system.length < lines) {
+        let line = generateLine();
+
+        if (line.some(n => used.has(n))) continue;
+
+        system.push(line);
+        line.forEach(n => used.add(n));
+    }
+
+    return system;
+}
+
+function generate() {
+    let budget = parseInt(document.getElementById("budget").value);
+    let system = generateSystem(budget);
+
+    let out = document.getElementById("output");
+    out.innerHTML = "";
+
+    system.forEach((l, i) => {
+        let div = document.createElement("div");
+        div.className = "line";
+        div.innerHTML = `Ligne ${i+1}: ${l.join(" - ")}`;
+        out.appendChild(div);
+    });
+}
+
+// Service worker register
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+}
+</script>
+
+</body>
+</html>
