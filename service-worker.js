@@ -2,8 +2,8 @@ const CACHE_NAME = "lotto-pwa-v1";
 
 const FILES = [
   "./",
-  "index.html",
-  "manifest.json"
+  "./index.html",
+  "./manifest.json"
 ];
 
 self.addEventListener("install", e => {
