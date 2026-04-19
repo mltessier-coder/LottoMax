@@ -6,7 +6,8 @@
 
 <title>Lotto Max Generator</title>
 
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#4CAF50">
 
 <style>
 body {
@@ -17,9 +18,7 @@ body {
     padding: 20px;
 }
 
-h1 {
-    color: #4CAF50;
-}
+h1 { color: #4CAF50; }
 
 button, select {
     padding: 12px;
@@ -32,6 +31,7 @@ button, select {
 button {
     background: #4CAF50;
     color: white;
+    cursor: pointer;
 }
 
 .line {
@@ -47,8 +47,8 @@ button {
 
 <body>
 
-<h1>🎲 Lotto Max </h1>
-<p>Générateur anti-pattern - Michel Tessier</p>
+<h1>🎲 Lotto Max</h1>
+<p>Générateur anti-pattern</p>
 
 <select id="budget">
     <option value="2">~10$ (2 lignes)</option>
@@ -121,9 +121,11 @@ function generate() {
     });
 }
 
-// Service worker register
+// ✅ FIX IMPORTANT PWA / GITHUB PAGES
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js');
+    navigator.serviceWorker.register('./service-worker.js', {
+        scope: './'
+    }).catch(err => console.log("SW error:", err));
 }
 </script>
 
